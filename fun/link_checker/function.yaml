@@ -1,0 +1,12 @@
+apiVersion: "nuclio.io/v1beta1"
+kind: "NuclioFunction"
+spec:
+  description: >
+    A function that connects to NATS, checks incoming links and publiches LinkValid or LinkInvalid events.
+  runtime: "golang"
+  handler: main:Handler
+  minReplicas: 1
+  maxReplicas: 1
+  build:
+    commands:
+    - apk --update --no-cache add ca-certificates

@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: news-manager
+automountServiceAccountToken: false
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: news-manager
+  labels:
+    svc: news
+    app: manager
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      svc: news
+      app: manager
+  template:
+    metadata:
+      labels:
+        svc: news
+        app: manager
+    spec:
+      serviceAccount: news-manager
+      containers:
+      - name: news-manager
+        image: g1g1/delinkcious-news:0.3
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 6060
+        envFrom:
+        - configMapRef:
+            name: news-manager-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: news-manager
+spec:
+  ports:
+  - port:  6060
+  selector:
+    svc: news
+    app: manager
